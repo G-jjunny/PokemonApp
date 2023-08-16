@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import PokeCard from "../../components/PokeCard";
 import AutoComplete from "../../components/AutoComplete";
+import { PokemonData, PokemonNameAndUrl } from "../../types/PokemonData";
 
 function MainPage() {
   // 모든 포켓몬의 데이터state
-  const [allPokemons, setAllPokemons] = useState([]);
+  const [allPokemons, setAllPokemons] = useState<PokemonNameAndUrl[]>([]);
 
   // 화면상에 보여지는 포켓몬 데이터state
-  const [displayedPokemons, setDisplayedPokemons] = useState([]);
+  const [displayedPokemons, setDisplayedPokemons] = useState<
+    PokemonNameAndUrl[]
+  >([]);
   const limitNum = 30;
   const url = `https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0`;
 
@@ -17,21 +20,19 @@ function MainPage() {
   }, []);
 
   const filterDisplayedPokemonData = (
-    allpokemonsDate,
-    displayedPokemons = []
+    allpokemonsDate: PokemonNameAndUrl[],
+    displayedPokemons: PokemonNameAndUrl[] = []
   ) => {
     const limit = displayedPokemons.length + limitNum;
     // 모든 포켓몬 데이터에서 limitnum만큼 더 가져오기
-    const array = allpokemonsDate.filter(
-      (pokemon, index) => index + 1 <= limit
-    );
+    const array = allpokemonsDate.filter((_, index) => index + 1 <= limit);
     return array;
   };
 
   const fetchPokeData = async () => {
     try {
       // 1008개 포켓몬 데이터 받아오기
-      const response = await axios.get(url);
+      const response = await axios.get<PokemonData>(url);
       // 모든 데이터 기억하기
       setAllPokemons(response.data.results);
       // 실제 화면에 보여질 리스트 state
@@ -53,7 +54,7 @@ function MainPage() {
         <section className="pt-6 flex flex-col justify-center items-center overflow-auto z-0 pb-3">
           <div className="flex flex-row flex-wrap gap-[16px] items-center justify-center px-2 max-w-4xl">
             {displayedPokemons.length > 0 ? (
-              displayedPokemons.map(({ url, name }, index) => (
+              displayedPokemons.map(({ url, name }: PokemonNameAndUrl) => (
                 <PokeCard key={url} url={url} name={name} />
               ))
             ) : (

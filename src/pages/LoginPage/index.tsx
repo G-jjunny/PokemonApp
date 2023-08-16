@@ -1,8 +1,6 @@
 import Pokemon from "../../assets/Img/pokemon.png";
 import Pikachu from "../../assets/Img/pikachu.png";
 import BgBall from "../../assets/Img/dottedpokeball.png";
-import BgBall2 from "../../assets/Img/pokeball.png";
-import styled from "styled-components";
 
 const LoginPage = () => {
   return (

@@ -3,6 +3,7 @@ import LogoImg from "../assets/Img/pokemon.png";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  User,
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
@@ -10,8 +11,9 @@ import {
   signOut,
 } from "firebase/auth";
 import app from "../firebase";
+import storage from "../utils/storage";
 
-const NavWrapper = styled.nav`
+const NavWrapper = styled.nav<{ show: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -99,9 +101,7 @@ const UserAvatar = styled.img`
   height: 100%;
 `;
 
-const initialUserData = localStorage.getItem("userData")
-  ? JSON.parse(localStorage.getItem("userData"))
-  : {};
+const initialUserData = storage.get<User>("userData");
 
 const NavBar = () => {
   const auth = getAuth(app);
@@ -109,7 +109,7 @@ const NavBar = () => {
 
   const [show, setShow] = useState(false);
   const { pathname } = useLocation();
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState<User | null>(initialUserData);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -131,7 +131,8 @@ const NavBar = () => {
       .then((result) => {
         // console.log(result);
         setUserData(result.user);
-        localStorage.setItem("userData", JSON.stringify(result.user));
+        storage.set("userData", result.user);
+        // localStorage.setItem("userData", JSON.stringify(result.user));
       })
       .catch((error) => {
         console.error(error);
@@ -155,7 +156,8 @@ const NavBar = () => {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        setUserData({});
+        storage.remove("userData");
+        setUserData(null);
       })
       .catch((error) => {
         alert(error.message);
@@ -175,7 +177,9 @@ const NavBar = () => {
         <LoginButton onClick={handleAuth}>로그인</LoginButton>
       ) : (
         <SignOut>
-          <UserAvatar src={userData.photoURL} alt="UserAvatar" />
+          {userData?.photoURL && (
+            <UserAvatar src={userData.photoURL} alt="UserAvatar" />
+          )}
           <DropDown onClick={handleLogout}>로그아웃</DropDown>
         </SignOut>
       )}

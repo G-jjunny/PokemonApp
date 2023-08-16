@@ -1,14 +1,25 @@
 import { useState } from "react";
+import { PokemonNameAndUrl } from "../types/PokemonData";
 
-function AutoComplete({ allPokemons, setDisplayedPokemons }) {
+interface AutoCompleteProps {
+  allPokemons: PokemonNameAndUrl[];
+  setDisplayedPokemons: React.Dispatch<
+    React.SetStateAction<PokemonNameAndUrl[]>
+  >;
+}
+
+function AutoComplete({
+  allPokemons,
+  setDisplayedPokemons,
+}: AutoCompleteProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filterNames = (input) => {
+  const filterNames = (input: string) => {
     const value = input.toLowerCase();
     return value ? allPokemons.filter((e) => e.name.includes(value)) : [];
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let text = searchTerm.trim(); //빈칸들을 지워줌
@@ -17,7 +28,7 @@ function AutoComplete({ allPokemons, setDisplayedPokemons }) {
   };
 
   // 이름이 같은거 찾는거
-  const checkEqualName = (input) => {
+  const checkEqualName = (input: string) => {
     const filteredArray = filterNames(input);
 
     return filteredArray[0]?.name === input ? [] : filteredArray;

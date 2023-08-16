@@ -1,11 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import LazyImage from "./LazyImage";
 import { Link } from "react-router-dom";
-import PokeBallIcon from "../assets/Img/small-pokeball-icon.jpg";
+import { PokemonNameAndUrl } from "../types/PokemonData";
+import { PokemonDetail } from "../types/PokemonDetail";
+import LazyImage from "./LazyImage";
 
-const PokeCard = ({ url, name }) => {
-  const [pokemon, setPokemon] = useState();
+interface PokeData {
+  id: number;
+  type: string;
+  name: string;
+}
+
+const PokeCard = ({ url, name }: PokemonNameAndUrl) => {
+  const [pokemon, setPokemon] = useState<PokeData>();
   useEffect(() => {
     fetchPokeDetailData();
   }, []);
@@ -20,9 +27,10 @@ const PokeCard = ({ url, name }) => {
     }
   }
 
-  function formatPokemonData(params) {
+  function formatPokemonData(params: PokemonDetail) {
+    // console.log(JSON.stringify(params));
     const { id, types, name } = params;
-    const pokeData = {
+    const pokeData: PokeData = {
       id,
       name,
       type: types[0].type.name,
